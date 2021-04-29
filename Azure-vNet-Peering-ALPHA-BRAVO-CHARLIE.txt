@@ -1,0 +1,52 @@
+#HUB-RG Creation
+echo "Creating Azure Resource Group"
+az group create -l eastus -n HUB-RG
+ 
+echo "Creating Azure Virtual Network"
+az network vnet create -g HUB-RG -n HUB-RG-vNET1 --address-prefix 10.1.0.0/16 \
+--subnet-name HUB-RG-Subnet-1 --subnet-prefix 10.1.1.0/24 -l eastus
+
+az vm create --resource-group HUB-RG --name MGMTVM --image UbuntuLTS --vnet-name HUB-RG-vNET1 \
+--subnet HUB-RG-Subnet-1 --admin-username testuser --admin-password "India@123456" --size Standard_B1s \
+--nsg ""
+  
+#ALPHA RG Creation
+
+echo "Creating Azure Resource Group"
+az group create -l eastus -n ALPHA
+ 
+echo "Creating Azure Virtual Network"
+az network vnet create -g ALPHA -n ALPHA-vNET1 --address-prefix 172.21.0.0/16 \
+--subnet-name ALPHA-Subnet-1 --subnet-prefix 172.21.1.0/24 -l eastus
+
+az vm create --resource-group ALPHA --name ALPHAVM1 --image UbuntuLTS --vnet-name ALPHA-vNET1 \
+--subnet ALPHA-Subnet-1 --admin-username testuser --admin-password "India@123456" --size Standard_B1s \
+--nsg ""
+
+#BRAVO RG Creation
+
+echo "Creating Azure Resource Group"
+az group create -l eastus -n BRAVO
+ 
+echo "Creating Azure Virtual Network"
+az network vnet create -g BRAVO -n BRAVO-vNET1 --address-prefix 172.22.0.0/16 \
+--subnet-name BRAVO-Subnet-1 --subnet-prefix 172.22.1.0/24 -l eastus
+
+az vm create --resource-group BRAVO --name BRAVOVM1 --image UbuntuLTS --vnet-name BRAVO-vNET1 \
+--subnet BRAVO-Subnet-1 --admin-username testuser --admin-password "India@123456" --size Standard_B1s \
+--nsg ""
+
+#CHARLIE RG Creation
+
+echo "Creating Azure Resource Group"
+az group create -l westus -n CHARLIE
+ 
+echo "Creating Azure Virtual Network"
+az network vnet create -g CHARLIE -n CHARLIE-vNET1 --address-prefix 172.23.0.0/16 \
+--subnet-name CHARLIE-Subnet-1 --subnet-prefix 172.23.1.0/24 -l westus
+
+az vm create --resource-group CHARLIE --name CHARLIEVM1 --image UbuntuLTS --vnet-name CHARLIE-vNET1 \
+--subnet CHARLIE-Subnet-1 --admin-username testuser --admin-password "India@123456" --size Standard_B1s \
+--nsg ""
+
+watch ls

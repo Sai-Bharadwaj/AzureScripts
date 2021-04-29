@@ -1,0 +1,38 @@
+RG=AZUREBATCHH
+echo "Creating Azure Resource Group"
+az group create --location eastus -n ${RG} 
+echo "Creating Azure Virtual Network"
+az network vnet create -g ${RG}  -n ${RG}-vNET1 --address-prefix 10.1.0.0/16 \
+--subnet-name ${RG}-Subnet-1 --subnet-prefix 10.1.1.0/24
+echo "Creating Azure Subnets"
+az network vnet subnet create -g ${RG}  --vnet-name ${RG}-vNET1 -n ${RG}-Subnet-2 \
+--address-prefixes 10.1.2.0/24
+az network vnet subnet create -g ${RG}  --vnet-name ${RG}-vNET1 -n ${RG}-Subnet-3 \
+--address-prefixes 10.1.3.0/24
+
+echo "Creating Azure NSG & Rules"
+az network nsg create -g ${RG} -n ${RG}_NSG1
+az network nsg rule create -g ${RG} --nsg-name ${RG}_NSG1 -n ${RG}_NSG1_RULE1 --priority 100 \
+--source-address-prefixes '*' --source-port-ranges '*' --destination-address-prefixes '*' \
+--destination-port-ranges '*' --access Allow   --protocol Tcp --description "Allowing All Traffic"
+
+echo "Creating Azure Availibility set”
+az vm availability-set create --name EAST-AVSET1 -g ${RG} --location eastus \
+--platform-fault-domain-count 3 --platform-update-domain-count 5
+
+az vm create --resource-group ${RG} --name ${RG}Testvm1 --image UbuntuLTs --vnet-name ${RG}-VNET1 \
+--subnet ${RG}-SUBNET-1 --admin-username testuser --admin-password "India@123456" --size Standard_B1s \
+--availability-set EAST-AVSET1 --nsg ${RG}_NSG1 --custom-data ./clouddrive/cloudinit.txt
+
+az vm create --resource-group ${RG} --name ${RG}Testvm2 --image UbuntuLTs --vnet-name ${RG}-VNET1 \
+--subnet ${RG}-SUBNET-2 --admin-username testuser --admin-password "India@123456" --size Standard_B1s \
+--availability-set EAST-AVSET1 --nsg ${RG}_NSG1 --custom-data ./clouddrive/cloudinit.txt
+
+
+az vm create --resource-group ${RG} --name ${RG}Testvm3 --image UbuntuLTs --vnet-name ${RG}-VNET1 \
+--subnet ${RG}-SUBNET-3 --admin-username testuser --admin-password "India@123456" --size Standard_B1s \
+--availability-set EAST-AVSET1 --nsg ${RG}_NSG1 --custom-data ./clouddrive/cloudinit.txt
+
+watch ls
+
+watch ls
